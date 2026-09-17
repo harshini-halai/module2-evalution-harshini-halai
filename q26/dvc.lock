@@ -49,13 +49,13 @@ stages:
       size: 752
     params:
       params.yaml:
-        model.n_estimators: 100
+        model.n_estimators: 120
         model.random_state: 42
     outs:
     - path: models/model.pkl
       hash: md5
-      md5: 41e784e7892770b0cb2f927d37fbdbad
-      size: 1621656
+      md5: b9841040b086d499c0e0b8dab9e15224
+      size: 1946781
   evaluate:
     cmd: python src/evaluate.py
     deps:
@@ -65,8 +65,8 @@ stages:
       size: 46221
     - path: models/model.pkl
       hash: md5
-      md5: 41e784e7892770b0cb2f927d37fbdbad
-      size: 1621656
+      md5: b9841040b086d499c0e0b8dab9e15224
+      size: 1946781
     - path: src/evaluate.py
       hash: md5
       md5: 7b666afd08a62bacf9c54a2ee3f29ab3
@@ -74,7 +74,7 @@ stages:
     outs:
     - path: metrics/accuracy.json
       hash: md5
-      md5: 6ebc11d19bd3e7b2167e6551312e5a8a
+      md5: 1c901dae3913135ffe1d1841cb6d6ab8
       size: 38
   drift:
     cmd: python src/drift_report.py
