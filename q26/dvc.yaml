@@ -1,0 +1,8 @@
+stages:
+  validate:
+    cmd: python src/validate.py data/loan_application.csv
+    deps:
+      - src/validate.py
+      - data/loan_application.csv
+    outs:
+      - reports/validation_report.json
