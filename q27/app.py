@@ -215,12 +215,17 @@ def chat(query: str):
 
     # Actual LLM response
     try:
-
         llm_start = time.time()
 
         response = llm.generate(query)
 
         LLM_LATENCY.observe(time.time() - llm_start)
+
+        usage = getattr(llm, "last_usage", {})
+
+        PROMPT_TOKENS.inc(usage.get("prompt_tokens", 0))
+        COMPLETION_TOKENS.inc(usage.get("completion_tokens", 0))
+        LLM_COST.inc(usage.get("cost_usd", 0.0))
 
         return {
             "valid": True,
@@ -228,7 +233,6 @@ def chat(query: str):
         }
 
     except Exception as exc:
-
         ERRORS.labels(type(exc).__name__).inc()
 
         logger.exception("LLM request failed")

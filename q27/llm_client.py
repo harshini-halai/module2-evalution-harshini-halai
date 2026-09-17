@@ -1,6 +1,9 @@
 import os
 import json
 from abc import ABC, abstractmethod
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class LLMClient(ABC):
@@ -14,7 +17,6 @@ class MockLLMClient(LLMClient):
 
     def generate(self, prompt):
 
-        # LLM-as-judge request
         if "You are a policy judge for Northwind Freight." in prompt:
 
             if "USER QUERY:" in prompt:
@@ -50,7 +52,6 @@ class MockLLMClient(LLMClient):
                 "reason": "Query is allowed under the Northwind Freight policy"
             })
 
-        # Normal chat request
         return (
             "Mock assistant response: "
             "Your shipment can be tracked using your consignment number."
@@ -58,6 +59,13 @@ class MockLLMClient(LLMClient):
 
 
 class RealLLMClient(LLMClient):
+
+    def __init__(self):
+        self.last_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "cost_usd": 0.0,
+        }
 
     def generate(self, prompt):
 
@@ -86,6 +94,27 @@ class RealLLMClient(LLMClient):
             ]
         )
 
+        prompt_tokens = getattr(response.usage, "prompt_tokens", 0) or 0
+        completion_tokens = getattr(response.usage, "completion_tokens", 0) or 0
+
+        prompt_cost = float(
+            os.getenv("LLM_PROMPT_COST_PER_1K", "0")
+        )
+        completion_cost = float(
+            os.getenv("LLM_COMPLETION_COST_PER_1K", "0")
+        )
+
+        cost_usd = (
+            (prompt_tokens / 1000) * prompt_cost
+            + (completion_tokens / 1000) * completion_cost
+        )
+
+        self.last_usage = {
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
+            "cost_usd": cost_usd,
+        }
+
         return response.choices[0].message.content
 
 
@@ -96,4 +125,12 @@ def get_llm_client():
     if provider == "real":
         return RealLLMClient()
 
-    return MockLLMClient()
+    client = MockLLMClient()
+
+    client.last_usage = {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "cost_usd": 0.0,
+    }
+
+    return client
