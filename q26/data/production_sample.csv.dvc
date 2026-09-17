@@ -1,0 +1,5 @@
+outs:
+- md5: 299deb2aa62f53e5fed349531cd3306a
+  size: 24823
+  hash: md5
+  path: production_sample.csv
