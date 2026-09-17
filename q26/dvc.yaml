@@ -5,4 +5,42 @@ stages:
       - src/validate.py
       - data/loan_application.csv
     outs:
-      - reports/validation_report.json
+      - metrics/validation_report.json
+
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+      - src/prepare.py
+      - data/loan_application.csv
+      - metrics/validation_report.json
+    outs:
+      - data/train.csv
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - data/train.csv
+    params:
+      - model.n_estimators
+      - model.random_state
+    outs:
+      - models/model.pkl
+
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+      - src/evaluate.py
+      - data/train.csv
+      - models/model.pkl
+    outs:
+      - metrics/accuracy.json
+
+  drift:
+    cmd: python src/drift_report.py
+    deps:
+      - src/drift_report.py
+      - data/train.csv
+      - data/production_sample.csv
+    metrics:
+      - metrics/drift_report.json

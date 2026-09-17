@@ -1,0 +1,98 @@
+schema: '2.0'
+stages:
+  validate:
+    cmd: python src/validate.py data/loan_application.csv
+    deps:
+    - path: data/loan_application.csv
+      hash: md5
+      md5: 6ea5fc2f9b8d91a1fd5ea8df4e56e2e7
+      size: 46221
+    - path: src/validate.py
+      hash: md5
+      md5: be98b5077b0a42f109cdb66029a3c3b5
+      size: 1937
+    outs:
+    - path: metrics/validation_report.json
+      hash: md5
+      md5: 6c36023493d16d64ea06b34fc2ea4b10
+      size: 20
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+    - path: data/loan_application.csv
+      hash: md5
+      md5: 6ea5fc2f9b8d91a1fd5ea8df4e56e2e7
+      size: 46221
+    - path: metrics/validation_report.json
+      hash: md5
+      md5: 6c36023493d16d64ea06b34fc2ea4b10
+      size: 20
+    - path: src/prepare.py
+      hash: md5
+      md5: 3b04ea4a7114ba823c547d7979ea4f7a
+      size: 215
+    outs:
+    - path: data/train.csv
+      hash: md5
+      md5: 6ea5fc2f9b8d91a1fd5ea8df4e56e2e7
+      size: 46221
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/train.csv
+      hash: md5
+      md5: 6ea5fc2f9b8d91a1fd5ea8df4e56e2e7
+      size: 46221
+    - path: src/train.py
+      hash: md5
+      md5: 9a73245fbf203bde5026081d37865ad7
+      size: 752
+    params:
+      params.yaml:
+        model.n_estimators: 100
+        model.random_state: 42
+    outs:
+    - path: models/model.pkl
+      hash: md5
+      md5: 41e784e7892770b0cb2f927d37fbdbad
+      size: 1621656
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - path: data/train.csv
+      hash: md5
+      md5: 6ea5fc2f9b8d91a1fd5ea8df4e56e2e7
+      size: 46221
+    - path: models/model.pkl
+      hash: md5
+      md5: 41e784e7892770b0cb2f927d37fbdbad
+      size: 1621656
+    - path: src/evaluate.py
+      hash: md5
+      md5: 7b666afd08a62bacf9c54a2ee3f29ab3
+      size: 517
+    outs:
+    - path: metrics/accuracy.json
+      hash: md5
+      md5: 6ebc11d19bd3e7b2167e6551312e5a8a
+      size: 38
+  drift:
+    cmd: python src/drift_report.py
+    deps:
+    - path: data/production_sample.csv
+      hash: md5
+      md5: 299deb2aa62f53e5fed349531cd3306a
+      size: 24823
+    - path: data/train.csv
+      hash: md5
+      md5: 6ea5fc2f9b8d91a1fd5ea8df4e56e2e7
+      size: 46221
+    - path: src/drift_report.py
+      hash: md5
+      md5: 716b1d34a7524ed37d0e41392ce496b4
+      size: 3066
+    outs:
+    - path: metrics/drift_report.json
+      hash: md5
+      md5: 7bbc091e0e07886e1ca158066904b586
+      size: 1176

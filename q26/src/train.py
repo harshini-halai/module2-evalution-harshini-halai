@@ -2,7 +2,10 @@ import pandas as pd
 import pickle
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+import yaml
 
+with open("params.yaml", "r") as f:
+    params = yaml.safe_load(f)
 
 df = pd.read_csv("data/train.csv")
 
@@ -20,8 +23,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 model = RandomForestClassifier(
-    n_estimators=100,
-    random_state=42
+    n_estimators=params["model"]["n_estimators"],
+    random_state=params["model"]["random_state"]
 )
 
 model.fit(X_train, y_train)

@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import numpy as np
+import pickle
 from scipy.stats import ks_2samp
 
 
@@ -68,26 +69,45 @@ for column in numeric_columns:
     }
 
 
+# Load trained model
+with open("models/model.pkl", "rb") as file:
+    model = pickle.load(file)
+
+
+# Create production features
+production_features = production.drop(columns=["approved"])
+production_features = pd.get_dummies(production_features)
+
+# Make production columns match training columns
+train_features = train.drop(columns=["approved"])
+train_features = pd.get_dummies(train_features)
+
+production_features = production_features.reindex(
+    columns=train_features.columns,
+    fill_value=0
+)
+
+
+# Generate model predictions
+production_predictions = model.predict(production_features)
+
+
 # Demographic parity
 group_rates = {}
 
 for group in ["A", "B"]:
 
-    group_data = production[
-        production["applicant_group"] == group
-    ]
+    group_mask = production["applicant_group"] == group
 
-    if len(group_data) > 0:
+    if group_mask.any():
         group_rates[group] = float(
-            group_data["approved"].mean()
+            production_predictions[group_mask].mean()
         )
 
 if "A" in group_rates and "B" in group_rates:
-
     demographic_parity_difference = abs(
         group_rates["A"] - group_rates["B"]
     )
-
 else:
     demographic_parity_difference = None
 

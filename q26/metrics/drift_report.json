@@ -1,0 +1,42 @@
+{
+  "age": {
+    "ks_statistic": 0.39083333333333337,
+    "ks_p_value": 5.350596747479499e-55,
+    "ks_drift": true,
+    "psi": 1.102714552357797,
+    "psi_band": "significant drift"
+  },
+  "annual_income": {
+    "ks_statistic": 0.5666666666666667,
+    "ks_p_value": 3.6164564679505443e-119,
+    "ks_drift": true,
+    "psi": 2.187815578866684,
+    "psi_band": "significant drift"
+  },
+  "employment_years": {
+    "ks_statistic": 0.22000000000000008,
+    "ks_p_value": 2.1417655159798144e-17,
+    "ks_drift": true,
+    "psi": 0.42941516679922215,
+    "psi_band": "significant drift"
+  },
+  "credit_score": {
+    "ks_statistic": 0.04833333333333334,
+    "ks_p_value": 0.3043369453305634,
+    "ks_drift": false,
+    "psi": 0.021576496495831723,
+    "psi_band": "no significant drift"
+  },
+  "loan_amount": {
+    "ks_statistic": 0.2891666666666667,
+    "ks_p_value": 6.376537438835578e-30,
+    "ks_drift": true,
+    "psi": 0.6921529292029927,
+    "psi_band": "significant drift"
+  },
+  "demographic_parity": {
+    "positive_rate_A": 0.6765578635014837,
+    "positive_rate_B": 0.16730038022813687,
+    "difference": 0.5092574832733469
+  }
+}

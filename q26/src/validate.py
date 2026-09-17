@@ -1,6 +1,7 @@
 import sys
 import pandas as pd
-
+import json
+import os
 
 file_path = sys.argv[1]
 
@@ -37,12 +38,13 @@ numeric_columns = [
     "approved"
 ]
 
+# column is numeric or not
 for column in numeric_columns:
     if not pd.api.types.is_numeric_dtype(df[column]):
         errors.append(column + " must be numeric")
 
 
-# Check missing values
+# missing values
 if df.isnull().any().any():
     errors.append("Null values found")
 
@@ -83,3 +85,6 @@ if errors:
 
 print("Validation PASSED")
 print("Rows checked:", len(df))
+
+with open("metrics/validation_report.json", "w") as f:
+    json.dump({"status": "PASSED"}, f)
