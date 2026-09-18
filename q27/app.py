@@ -14,10 +14,7 @@ from prometheus_client import (
 from guardrails import check_query, llm_policy_check
 from llm_client import get_llm_client
 
-
-# -------------------------
 # Logging
-# -------------------------
 
 logging.basicConfig(
     level=logging.INFO,
@@ -26,20 +23,12 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-
-# -------------------------
 # FastAPI
-# -------------------------
-
 app = FastAPI(title="Northwind Freight Chat Service")
 
 llm = get_llm_client()
 
-
-# -------------------------
 # Prometheus metrics
-# -------------------------
-
 HTTP_REQUESTS = Counter(
     "http_requests_total",
     "Total HTTP requests",
@@ -89,10 +78,7 @@ IN_FLIGHT = Gauge(
     "Requests currently being processed",
 )
 
-
-# -------------------------
 # Middleware
-# -------------------------
 
 @app.middleware("http")
 async def metrics_middleware(request, call_next):
@@ -131,11 +117,7 @@ async def metrics_middleware(request, call_next):
 
         IN_FLIGHT.dec()
 
-
-# -------------------------
 # Health endpoint
-# -------------------------
-
 @app.get("/")
 def root():
     return {
@@ -148,22 +130,14 @@ def root():
 def health():
     return {"status": "healthy"}
 
-
-# -------------------------
 # Metrics endpoint
-# -------------------------
-
 @app.get("/metrics")
 def metrics():
     return generate_latest(), 200, {
         "Content-Type": CONTENT_TYPE_LATEST
     }
 
-
-# -------------------------
 # Chat endpoint
-# -------------------------
-
 @app.post("/chat")
 def chat(query: str):
 
